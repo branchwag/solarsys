@@ -32,7 +32,7 @@ int main(void) {
 	  stars[i].x = rand() % SCREEN_WIDTH;
 	  stars[i].y = rand() % SCREEN_HEIGHT;       
 	  stars[i].brightness = RandomFloat(0.5f, 1.0f);
-          stars[i].twinkleSpeed = RandomFloat(2.0f, 5.0f);
+          stars[i].twinkleSpeed = RandomFloat(0, 1.0f);
           stars[i].twinklePhase = RandomFloat(0, 2 * PI);
 	}
 
