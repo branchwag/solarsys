@@ -24,10 +24,14 @@ int main(void) {
 	SetTargetFPS(60);
 
 	Camera3D camera = { 0 };
-	camera.position = (Vector3){ 0.0f, 2.0f, 10.0f };
+	camera.position = (Vector3){ 0.0f, 2.0f, 50.0f };
 	camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
 	camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
 	camera.fovy = 45.0f;
+
+	Texture2D marsTexture = LoadTexture("marstexture.png");
+	Model planetModel = LoadModelFromMesh(GenMeshSphere(2.0f, 32, 32));
+	planetModel.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = marsTexture;
 
 	srand(time(NULL));
 	Star stars[NUM_STARS];
@@ -65,12 +69,15 @@ int main(void) {
             DrawCircle(stars[i].x, stars[i].y, starSize, starColor);
 	  }
 	  BeginMode3D(camera);
-	  DrawSphere((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, WHITE);
-	  DrawGrid(10, 1.0f);
+	  //DrawSphere((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, WHITE);
+	  DrawModel(planetModel, (Vector3) {0.0f, 0.0f, 0.0f }, 2.0f, WHITE);
+	  //DrawGrid(10, 1.0f);
 	  EndMode3D();
 	  DrawText("Move camera with arrow keys or WASD", 10, 10, 20, DARKGRAY);
 	  EndDrawing();
 	 }
+	UnloadTexture(marsTexture);
+	UnloadModel(planetModel);
 	CloseWindow();
 	return 0;
 }
