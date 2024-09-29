@@ -3,8 +3,8 @@
 #include <time.h>
 #include <math.h>
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 800
+#define SCREEN_WIDTH 900
+#define SCREEN_HEIGHT 900
 #define NUM_STARS 100
 
 typedef struct {
