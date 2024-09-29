@@ -43,10 +43,10 @@ int main(void) {
 	float timeElapsed = 0.0f;
 
 	while (!WindowShouldClose()) {
-	  if(IsKeyDown(KEY_RIGHT)) camera.position.x += 0.1f;
-	  if(IsKeyDown(KEY_LEFT)) camera.position.x -= 0.1f;
-	  if(IsKeyDown(KEY_UP)) camera.position.z -= 0.1f;
-	  if(IsKeyDown(KEY_DOWN)) camera.position.z += 0.1f;
+	  if(IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) camera.position.x += 0.1f;
+	  if(IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) camera.position.x -= 0.1f;
+	  if(IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) camera.position.z -= 0.1f;
+	  if(IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) camera.position.z += 0.1f;
 
 	  timeElapsed += GetFrameTime();
 
@@ -68,7 +68,7 @@ int main(void) {
 	  DrawSphere((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, WHITE);
 	  DrawGrid(10, 1.0f);
 	  EndMode3D();
-	  DrawText("Move camera with arrow keys", 10, 10, 20, DARKGRAY);
+	  DrawText("Move camera with arrow keys or WASD", 10, 10, 20, DARKGRAY);
 	  EndDrawing();
 	 }
 	CloseWindow();
