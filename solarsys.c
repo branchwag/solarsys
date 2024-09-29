@@ -15,8 +15,6 @@ typedef struct {
 	float twinklePhase;
 } Star;
 
-//mebbe struct for planet later
-
 float RandomFloat(float min, float max) {
 	return min + (float)rand() / (float)RAND_MAX * (max - min);
 }
@@ -24,7 +22,13 @@ float RandomFloat(float min, float max) {
 int main(void) {
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Solar Sys");
 	SetTargetFPS(60);
-	
+
+	Camera3D camera = { 0 };
+	camera.position = (Vector3){ 0.0f, 2.0f, 10.0f };
+	camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
+	camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+	camera.fovy = 45.0f;
+
 	srand(time(NULL));
 	Star stars[NUM_STARS];
 
@@ -39,6 +43,11 @@ int main(void) {
 	float timeElapsed = 0.0f;
 
 	while (!WindowShouldClose()) {
+	  if(IsKeyDown(KEY_RIGHT)) camera.position.x += 0.1f;
+	  if(IsKeyDown(KEY_LEFT)) camera.position.x -= 0.1f;
+	  if(IsKeyDown(KEY_UP)) camera.position.z -= 0.1f;
+	  if(IsKeyDown(KEY_DOWN)) camera.position.z += 0.1f;
+
 	  timeElapsed += GetFrameTime();
 
 	  BeginDrawing();
@@ -55,7 +64,11 @@ int main(void) {
 
             DrawCircle(stars[i].x, stars[i].y, starSize, starColor);
 	  }
-	  //draw 3D spheres for planets
+	  BeginMode3D(camera);
+	  DrawSphere((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, WHITE);
+	  DrawGrid(10, 1.0f);
+	  EndMode3D();
+	  DrawText("Move camera with arrow keys", 10, 10, 20, DARKGRAY);
 	  EndDrawing();
 	 }
 	CloseWindow();
