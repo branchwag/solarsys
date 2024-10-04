@@ -6,6 +6,7 @@
 #define SCREEN_WIDTH 900
 #define SCREEN_HEIGHT 900
 #define NUM_STARS 100
+#define NUM_PLANETS 8
 
 typedef struct {
 	int x;
@@ -14,6 +15,16 @@ typedef struct {
 	float twinkleSpeed;
 	float twinklePhase;
 } Star;
+
+typedef struct {
+	Vector3 position;
+	float radius;
+	float orbitRadius;
+	float orbitSpeed;
+	Color color;
+	Model model;
+	Texture2D texture;
+} Planet;
 
 float RandomFloat(float min, float max) {
 	return min + (float)rand() / (float)RAND_MAX * (max - min);
@@ -29,13 +40,10 @@ int main(void) {
 	camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
 	camera.fovy = 45.0f;
 
-	Texture2D marsTexture = LoadTexture("marstexture.png");
-	Model planetModel = LoadModelFromMesh(GenMeshSphere(2.0f, 32, 32));
-	planetModel.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = marsTexture;
-
 	srand(time(NULL));
-	Star stars[NUM_STARS];
 
+  //init
+	Star stars[NUM_STARS];
 	for (int i = 0; i < NUM_STARS; i++) {
 	  stars[i].x = rand() % SCREEN_WIDTH;
 	  stars[i].y = rand() % SCREEN_HEIGHT;       
@@ -43,6 +51,20 @@ int main(void) {
           stars[i].twinkleSpeed = RandomFloat(0, 1.0f);
           stars[i].twinklePhase = RandomFloat(0, 2 * PI);
 	}
+
+      Planet planets[NUM_PLANETS];
+      const char* texturePaths[] = {"sun.png", "mercury.png", "venus.png", "earth.png", "mars.png", "jupiter.png", "saturn.png", "uranus.png"};
+      Color planetColors[] = {GOLD, GRAY, BEIGE, BLUE, RED, ORANGE, YELLOW, SKYBLUE};
+
+      for (int i = 0; i < NUM_PLANETS; i++) {
+	planets[i].radius = 0.5f + i * 0.2f;
+	planets[i].orbitRadius = 5.0f + i * 3.0f;
+	planets[i].orbitSpeed = (8 - i) * 0.1f;
+	planets[i].color = planetColors[i];
+	planets[i].model = LoadModelFromMesh(GenMeshSphere(planets[i].radius, 32, 32));
+	planets[i].texture = LoadTexture(texturePaths[i]);
+	planets[i].model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = planets[i].texture;
+  }
 
 	float timeElapsed = 0.0f;
 
@@ -69,15 +91,26 @@ int main(void) {
             DrawCircle(stars[i].x, stars[i].y, starSize, starColor);
 	  }
 	  BeginMode3D(camera);
-	  //DrawSphere((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, WHITE);
-	  DrawModel(planetModel, (Vector3) {0.0f, 0.0f, 0.0f }, 2.0f, WHITE);
-	  //DrawGrid(10, 1.0f);
+	  
+	  for (int i = 0; i < NUM_PLANETS; i++) {
+	      float angle = timeElapsed * planets[i].orbitSpeed;
+	      planets[i].position.x = cosf(angle) * planets[i].orbitRadius;
+	      planets[i].position.z = sinf(angle) * planets[i].orbitRadius;
+	      planets[i].position.y = 0;
+
+	      DrawModel(planets[i].model, planets[i].position, 1.0f, planets[i].color);
+    }
+	  
 	  EndMode3D();
-	  DrawText("Move camera with arrow keys or WASD", 10, 10, 20, DARKGRAY);
+	  
+          DrawText("Move camera with arrow keys or WASD", 10, 10, 20, DARKGRAY);
 	  EndDrawing();
 	 }
-	UnloadTexture(marsTexture);
-	UnloadModel(planetModel);
+	for (int i = 0; i < NUM_PLANETS; i++) {
+	   UnloadTexture(planets[i].texture);
+	   UnloadModel(planets[i].model);
+	}
+
 	CloseWindow();
 	return 0;
 }
